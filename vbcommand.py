@@ -8,7 +8,7 @@
 import subprocess
 
 # List VMs based on provided selection
-def list_virtual_machines(get_selection="all", , numbered=False):
+def list_virtual_machines(get_selection="all", numbered=False):
     # Only allow certain selections
     get_selection = get_selection.lower()
     if get_selection not in ("all", "running", "stopped"):
