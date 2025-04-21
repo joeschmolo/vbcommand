@@ -168,7 +168,35 @@ def create_vm():
     except subprocess.CalledProcessError as e:
         print(f"An error occurred creating '{vm_name}':\n  {e}\n")
 
+# Delete a VM
+def delete_vm():
+    # Show all VMs
+    print("Select a VM to delete:\n")
+    all_vms = list_virtual_machines("all", numbered=True)
+    if not all_vms:
+        print("No VMs available for deletion.\n")
+        return
 
+    choice = input("Enter the number of the VM to delete: ").strip()
+    if not choice.isdigit() or not (1 <= int(choice) <= len(all_vms)):
+        print("Error: invalid selection.\n")
+        return
+
+    vm_name = all_vms[int(choice) - 1]
+    confirm = input(f"Are you sure you want to delete '{vm_name}'? [y/N]: ").strip().lower()
+    if confirm not in ("y", "yes"):
+        print("Deletion cancelled.\n")
+        return
+
+    print(f"Deleting '{vm_name}'...\n")
+    try:
+        subprocess.run(
+            ["VBoxManage", "unregistervm", vm_name, "--delete"],
+            check=True
+        )
+        print(f"'{vm_name}' deleted.\n")
+    except subprocess.CalledProcessError:
+        print(f"Failed to delete '{vm_name}'.\n")
 
 # Exit this program
 def exit_program():
@@ -183,6 +211,7 @@ def main_menu():
         '2': ("Start a VM", start_vm),
         '3': ("Stop a VM (save current state)", stop_vm),
         '4': ("Create a VM", create_vm),
+        '5': ("Delete a VM", delete_vm),
     }
     # Display the menu
     while True:
