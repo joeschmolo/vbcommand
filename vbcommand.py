@@ -32,17 +32,20 @@ def list_virtual_machines(get_selection="all"):
     # Decide which VMs to show
     if get_selection == "all":
         vm_selection = all_vms
+        print("Listing all virtual machines...\n")
     elif get_selection == "running":
         vm_selection = running_vms
+        print("Listing running virtual machines...\n")
     else:
         # stopped
         vm_selection = all_vms - running_vms
+        print("Listing stopped virtual machines...\n")
 
     # Print selection
-    print("Virtual Machines:\n")
+    print("Virtual Machines:")
     for vm in sorted(vm_selection):
         status = "running" if vm in running_vms else "stopped"
-        print(f"[{status}] {vm}")
+        print(f"\t[{status}] {vm}")
     print()
 
 # List all VMs
