@@ -9,8 +9,33 @@ import subprocess
 
 # List VMs
 def list_virtual_machines():
+    # Grab all VMs
+    vm_list = subprocess.check_output(
+        ["VBoxManage", "list", "vms"],
+        text=True
+    ).splitlines()
+    all_vms = {
+        line.split()[0].strip('"')
+        for line in all_output
+        if line.strip()
+    }
+
+    # Grab only running VMs
+    running_vm_list = subprocess.check_output(
+        ["VBoxManage", "list", "runningvms"],
+        text=True
+    ).splitlines()
+    running_vms = {
+        line.split()[0].strip('"')
+        for line in run_output
+        if line.strip()
+    }
+
     print("Virtual Machines:\n")
-    subprocess.run(["VBoxManage", "list", "vms"])
+    for vm in sorted(all_vms):
+        status = "running" if vm in running_vms else "stopped"
+        print(f"[{status}] {vm}")
+    print()
 
 # Exit this program
 def exit_program():
@@ -23,7 +48,7 @@ def main_menu():
     options = {
         '0': ("Exit program", exit_program),
         '1': ("List VMs", list_virtual_machines),
-        
+
     }
     # Display the menu
     while True:
