@@ -136,6 +136,7 @@ def main():
     print("################################")
     print("### VBCommand by Joe Schultz ###")
     print("################################")
+    print("\nWelcome to the Virtual Box Command tool!\n")
     main_menu()
 
 if __name__ == "__main__":
