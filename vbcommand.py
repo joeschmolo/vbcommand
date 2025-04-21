@@ -94,7 +94,7 @@ def stop_vm():
     print(f"Stopping '{vm_name}'...\n")
     try:
         subprocess.run(
-            ["VBoxManage", "controlvm", vm_name, "acpipowerbutton"],
+            ["VBoxManage", "controlvm", vm_name, "shutdown"],
             check=True
         )
         print(f"'{vm_name}' stopped.\n")
