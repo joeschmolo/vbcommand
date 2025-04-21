@@ -10,15 +10,25 @@
 def list_virtual_machines():
     pass
 
+# Exit this program
+def exit_program():
+    print("Exiting... Goodbye!")
+    # either raise SystemExit or just return a flag
+    raise SystemExit
+
 # Prompt the main menu
 def main_menu():
     options = {
-        '1': ("List VMs",   list_virtual_machines)
+        '0': ("Exit program", exit_program),
+        '1': ("List VMs", list_virtual_machines),
+        
     }
     # Display the menu
     while True:
+        print("################################\n\nMenu:")
         for index in sorted(options):
-            print(f"{index}. {options[index][0]}")
+            print(f"\t{index}. {options[index][0]}")
+        print("")
         selection = input("Menu Selection: ").strip()
         command = options.get(selection)
         if command:
