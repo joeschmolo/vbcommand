@@ -35,13 +35,13 @@ def list_virtual_machines(get_selection="all", numbered=False):
     # Print selection
     print("Virtual Machines:\n")
     if numbered:
-        for i, vm in enumerate(selected, start=1):
+        for i, vm in enumerate(vm_selection, start=1):
             status = "running" if vm in running_vms else "stopped"
             print(f"\t{i}. [{status}] {vm}")
         print()
-        return selected
+        return vm_selection
     else:
-        for vm in selected:
+        for vm in vm_selection:
             status = "running" if vm in running_vms else "stopped"
             print(f"\t[{status}] {vm}")
         print()
