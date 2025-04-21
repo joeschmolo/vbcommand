@@ -16,7 +16,7 @@ def list_virtual_machines():
     ).splitlines()
     all_vms = {
         line.split()[0].strip('"')
-        for line in all_output
+        for line in vm_list
         if line.strip()
     }
 
@@ -27,7 +27,7 @@ def list_virtual_machines():
     ).splitlines()
     running_vms = {
         line.split()[0].strip('"')
-        for line in run_output
+        for line in running_vm_list
         if line.strip()
     }
 
