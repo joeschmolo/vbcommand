@@ -78,8 +78,28 @@ def start_vm():
 
 # Stop a VM
 def stop_vm():
-    print("Listing running virtual machines...\n")
-    list_virtual_machines("running")
+    # Show only running VMs
+    print("Select a running VM to stop:\n")
+    running = list_virtual_machines("running", numbered=True)
+    if not running:
+        print("No running VMs available.\n")
+        return
+
+    choice = input("Enter the number of the VM to stop: ").strip()
+    if not choice.isdigit() or not (1 <= int(choice) <= len(running)):
+        print("Error: invalid selection.\n")
+        return
+
+    vm_name = running[int(choice) - 1]
+    print(f"Stopping '{vm_name}'...\n")
+    try:
+        subprocess.run(
+            ["VBoxManage", "controlvm", vm_name, "acpipowerbutton"],
+            check=True
+        )
+        print(f"'{vm_name}' stopped.\n")
+    except subprocess.CalledProcessError:
+        print(f"Failed to stop '{vm_name}'.\n")
     
 
 # Exit this program
