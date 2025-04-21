@@ -32,14 +32,11 @@ def list_virtual_machines(get_selection="all"):
     # Decide which VMs to show
     if get_selection == "all":
         vm_selection = all_vms
-        print("Listing all virtual machines...\n")
     elif get_selection == "running":
         vm_selection = running_vms
-        print("Listing running virtual machines...\n")
     else:
         # stopped
         vm_selection = all_vms - running_vms
-        print("Listing stopped virtual machines...\n")
 
     # Print selection
     print("Virtual Machines:")
@@ -50,7 +47,19 @@ def list_virtual_machines(get_selection="all"):
 
 # List all VMs
 def list_all_vms():
+    print("Listing all virtual machines...\n")
     list_virtual_machines("all")
+
+# Start a VM
+def start_vm():
+    print("Listing stopped virtual machines...\n")
+    list_virtual_machines("stopped")
+
+# Stop a VM
+def stop_vm():
+    print("Listing running virtual machines...\n")
+    list_virtual_machines("running")
+    
 
 # Exit this program
 def exit_program():
@@ -62,7 +71,8 @@ def main_menu():
     options = {
         '0': ("Exit program", exit_program),
         '1': ("List VMs", list_all_vms),
-
+        '2': ("Start a VM", start_vm),
+        '3': ("Stop a VM", stop_vm),
     }
     # Display the menu
     while True:
