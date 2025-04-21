@@ -5,10 +5,12 @@
 #
 # Description: Menu-driven program to control VirtualBox
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+import subprocess
 
 # List VMs
 def list_virtual_machines():
-    pass
+    print("Virtual Machines:\n")
+    subprocess.run(["VBoxManage", "list", "vms"])
 
 # Exit this program
 def exit_program():
