@@ -94,7 +94,7 @@ def stop_vm():
     print(f"Stopping '{vm_name}'...\n")
     try:
         subprocess.run(
-            ["VBoxManage", "controlvm", vm_name, "shutdown"],
+            ["VBoxManage", "controlvm", vm_name, "savestate"],
             check=True
         )
         print(f"'{vm_name}' stopped.\n")
@@ -113,7 +113,7 @@ def main_menu():
         '0': ("Exit program", exit_program),
         '1': ("List VMs", list_all_vms),
         '2': ("Start a VM", start_vm),
-        '3': ("Stop a VM", stop_vm),
+        '3': ("Stop a VM (save current state)", stop_vm),
     }
     # Display the menu
     while True:
