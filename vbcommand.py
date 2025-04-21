@@ -6,9 +6,32 @@
 # Description: Menu-driven program to control VirtualBox
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+# List VMs
+def list_virtual_machines():
+    pass
+
+# Prompt the main menu
+def main_menu():
+    options = {
+        '1': ("List VMs",   list_virtual_machines)
+    }
+    # Display the menu
+    while True:
+        for index in sorted(options):
+            print(f"{index}. {options[index][0]}")
+        selection = input("Menu Selection: ").strip()
+        command = options.get(selection)
+        if command:
+            # Run the selected option
+            command[1]()
+        else:
+            # Output error if text entered is not one of the options
+            print("Error: Option unknown. Please select from the menu.\n")
+
+
 # Main program
 def main():
-    pass
+    main_menu()
 
 if __name__ == "__main__":
     main()
