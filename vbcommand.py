@@ -235,6 +235,112 @@ def display_vm_info():
     except subprocess.CalledProcessError:
         print(f"Failed to retrieve info for '{vm_name}'.\n")
 
+# Take a VM snapshot
+def take_vm_snapshot():
+    # Select VM
+    print("Select a VM to snapshot:\n")
+    all_vms = list_virtual_machines("all", numbered=True)
+    if not all_vms:
+        print("No VMs available.\n")
+        return
+
+    choice = input("Enter the number of the VM to snapshot: ").strip()
+    if not choice.isdigit() or not (1 <= int(choice) <= len(all_vms)):
+        print("Error: invalid selection.\n")
+        return
+    vm_name = all_vms[int(choice) - 1]
+
+    # Snapshot name
+    snap_name = input(f"Enter a name for the new snapshot of '{vm_name}': ").strip()
+    if not snap_name:
+        print("Error: snapshot name cannot be empty.\n")
+        return
+
+    print(f"Taking snapshot '{snap_name}' of '{vm_name}'...\n")
+    try:
+        subprocess.run(
+            ["VBoxManage", "snapshot", vm_name, "take", snap_name],
+            check=True
+        )
+        print(f"Snapshot '{snap_name}' created.\n")
+    except subprocess.CalledProcessError:
+        print(f"Failed to take snapshot '{snap_name}'.\n")
+
+# List VM snapshots
+def list_vm_snapshots():
+    # Select VM
+    print("Select a VM to list snapshots:\n")
+    all_vms = list_virtual_machines("all", numbered=True)
+    if not all_vms:
+        print("No VMs available.\n")
+        return None
+
+    choice = input("Enter the number of the VM: ").strip()
+    if not choice.isdigit() or not (1 <= int(choice) <= len(all_vms)):
+        print("Error: invalid selection.\n")
+        return None
+    vm_name = all_vms[int(choice) - 1]
+
+    # Get snapshot list
+    print(f"Listing snapshots for '{vm_name}'...\n")
+    try:
+        raw = subprocess.check_output(
+            ["VBoxManage", "snapshot", vm_name, "list"],
+            text=True
+        ).splitlines()
+    except subprocess.CalledProcessError:
+        print(f"Failed to list snapshots for '{vm_name}'.\n")
+        return None
+
+    # Parse snapshot names
+    snaps = []
+    for line in raw:
+        line = line.strip()
+        if line.startswith("Name:"):
+            # e.g. "Name: my-snap (UUID: ...)"
+            name = line.split("Name:")[1].split("(")[0].strip()
+            snaps.append(name)
+
+    if not snaps:
+        print(f"No snapshots found for '{vm_name}'.\n")
+        return None
+
+    # Display numbered
+    for i, s in enumerate(snaps, start=1):
+        print(f"\t{i}. {s}")
+    print()
+
+    return (vm_name, snaps)
+
+# Restore a VM snapshot
+def restore_vm_snapshot():
+    # First list snapshots, reusing list_vm_snapshots
+    result = list_vm_snapshots()
+    if not result:
+        return
+    vm_name, snaps = result
+
+    choice = input("Enter the number of the snapshot to restore: ").strip()
+    if not choice.isdigit() or not (1 <= int(choice) <= len(snaps)):
+        print("Error: invalid selection.\n")
+        return
+    snap_name = snaps[int(choice) - 1]
+
+    confirm = input(f"Restore '{vm_name}' to snapshot '{snap_name}'? This cannot be undone. [y/N]: ").strip().lower()
+    if confirm not in ("y", "yes"):
+        print("Restore cancelled.\n")
+        return
+
+    print(f"Restoring '{vm_name}' to '{snap_name}'...\n")
+    try:
+        subprocess.run(
+            ["VBoxManage", "snapshot", vm_name, "restore", snap_name],
+            check=True
+        )
+        print(f"'{vm_name}' restored to snapshot '{snap_name}'.\n")
+    except subprocess.CalledProcessError:
+        print(f"Failed to restore snapshot '{snap_name}'.\n")
+
 # Exit this program
 def exit_program():
     print("Exiting... Goodbye!")
@@ -250,6 +356,9 @@ def main_menu():
         '4': ("Create a VM", create_vm),
         '5': ("Delete a VM", delete_vm),
         '6': ("View a VM Configuration", display_vm_info),
+        '7': ("Take a snapshot", take_vm_snapshot),
+        '8': ("List snapshots", list_vm_snapshots),
+        '9': ("Restore a snapshot", restore_vm_snapshot),
     }
     # Display the menu
     while True:
