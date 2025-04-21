@@ -52,11 +52,11 @@ def main_menu():
     }
     # Display the menu
     while True:
-        print("################################\n\nMenu:")
+        print(">>> Menu:")
         for index in sorted(options):
             print(f"\t{index}. {options[index][0]}")
         print("")
-        selection = input("Menu Selection: ").strip()
+        selection = input("(prompt) Menu Selection: ").strip()
         command = options.get(selection)
         if command:
             # Run the selected option
@@ -68,6 +68,9 @@ def main_menu():
 
 # Main program
 def main():
+    print("################################")
+    print("### VBCommand by Joe Schultz ###")
+    print("################################")
     main_menu()
 
 if __name__ == "__main__":
