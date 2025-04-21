@@ -210,6 +210,31 @@ def delete_vm():
     except subprocess.CalledProcessError:
         print(f"Failed to delete '{vm_name}'.\n")
 
+# Display hardware configuration
+def display_vm_info():
+    # Show all VMs
+    print("Select a VM to view configuration:\n")
+    all_vms = list_virtual_machines("all", numbered=True)
+    if not all_vms:
+        print("No VMs available.\n")
+        return
+
+    choice = input("Enter the number of the VM to view: ").strip()
+    if not choice.isdigit() or not (1 <= int(choice) <= len(all_vms)):
+        print("Error: invalid selection.\n")
+        return
+
+    vm_name = all_vms[int(choice) - 1]
+    print(f"Showing configuration for '{vm_name}'...\n")
+    try:
+        info = subprocess.check_output(
+            ["VBoxManage", "showvminfo", vm_name],
+            text=True
+        )
+        print(info)
+    except subprocess.CalledProcessError:
+        print(f"Failed to retrieve info for '{vm_name}'.\n")
+
 # Exit this program
 def exit_program():
     print("Exiting... Goodbye!")
@@ -224,6 +249,7 @@ def main_menu():
         '3': ("Stop a VM (save current state)", stop_vm),
         '4': ("Create a VM", create_vm),
         '5': ("Delete a VM", delete_vm),
+        '6': ("View a VM Configuration", display_vm_info),
     }
     # Display the menu
     while True:
