@@ -27,7 +27,7 @@ def list_virtual_machines(get_selection="all"):
         ["VBoxManage", "list", "runningvms"],
         text=True
     ).splitlines()
-    running_vms = { line.split()[0].strip('"') for line in run_list if line.strip() }
+    running_vms = { line.split()[0].strip('"') for line in running_vm_list if line.strip() }
 
     # Decide which VMs to show
     if get_selection == "all":
