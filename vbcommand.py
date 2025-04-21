@@ -8,7 +8,7 @@
 import subprocess
 
 # List VMs based on provided selection
-def list_virtual_machines(get_selection="all"):
+def list_virtual_machines(get_selection="all", , numbered=False):
     # Only allow certain selections
     get_selection = get_selection.lower()
     if get_selection not in ("all", "running", "stopped"):
@@ -16,17 +16,11 @@ def list_virtual_machines(get_selection="all"):
         return
 
     # Grab all VMs
-    vm_list = subprocess.check_output(
-        ["VBoxManage", "list", "vms"],
-        text=True
-    ).splitlines()
+    vm_list = subprocess.check_output(["VBoxManage","list","vms"], text=True).splitlines()
     all_vms = { line.split()[0].strip('"') for line in vm_list if line.strip() }
 
     # Grab all running VMs
-    running_vm_list = subprocess.check_output(
-        ["VBoxManage", "list", "runningvms"],
-        text=True
-    ).splitlines()
+    running_vm_list = subprocess.check_output(["VBoxManage","list","runningvms"], text=True).splitlines()
     running_vms = { line.split()[0].strip('"') for line in running_vm_list if line.strip() }
 
     # Decide which VMs to show
@@ -39,11 +33,19 @@ def list_virtual_machines(get_selection="all"):
         vm_selection = all_vms - running_vms
 
     # Print selection
-    print("Virtual Machines:")
-    for vm in sorted(vm_selection):
-        status = "running" if vm in running_vms else "stopped"
-        print(f"\t[{status}] {vm}")
-    print()
+    print("Virtual Machines:\n")
+    if numbered:
+        for i, vm in enumerate(selected, start=1):
+            status = "running" if vm in running_vms else "stopped"
+            print(f"\t{i}. [{status}] {vm}")
+        print()
+        return selected
+    else:
+        for vm in selected:
+            status = "running" if vm in running_vms else "stopped"
+            print(f"\t[{status}] {vm}")
+        print()
+        return None
 
 # List all VMs
 def list_all_vms():
