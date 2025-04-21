@@ -54,8 +54,25 @@ def list_all_vms():
 
 # Start a VM
 def start_vm():
-    print("Listing stopped virtual machines...\n")
-    list_virtual_machines("stopped")
+    # Show only stopped VMs
+    print("Select a stopped VM to start:\n")
+    stopped = list_virtual_machines("stopped", numbered=True)
+    if not stopped:
+        print("No stopped VMs available.\n")
+        return
+
+    choice = input("Enter VM number: ").strip()
+    if not choice.isdigit() or not (1 <= int(choice) <= len(stopped)):
+        print("Error: invalid selection.\n")
+        return
+
+    vm_name = stopped[int(choice) - 1]
+    print(f"Starting '{vm_name}'...\n")
+    try:
+        subprocess.run(["VBoxManage", "startvm", vm_name], check=True)
+        print(f"'{vm_name}' started.\n")
+    except subprocess.CalledProcessError:
+        print(f"Failed to start '{vm_name}'.\n")
 
 # Stop a VM
 def stop_vm():
