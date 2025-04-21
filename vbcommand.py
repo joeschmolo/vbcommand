@@ -183,6 +183,18 @@ def delete_vm():
         return
 
     vm_name = all_vms[int(choice) - 1]
+
+    # Check if VM is running
+    running_list = subprocess.check_output(
+        ["VBoxManage", "list", "runningvms"],
+        text=True
+    ).splitlines()
+    running_vms = { line.split()[0].strip('"') for line in running_list if line.strip() }
+
+    if vm_name in running_vms:
+        print(f"Error: '{vm_name}' is currently running. Please stop it before deleting.\n")
+        return
+
     confirm = input(f"Are you sure you want to delete '{vm_name}'? [y/N]: ").strip().lower()
     if confirm not in ("y", "yes"):
         print("Deletion cancelled.\n")
