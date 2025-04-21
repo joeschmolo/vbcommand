@@ -63,7 +63,7 @@ def start_vm():
         print("No stopped VMs available.\n")
         return
 
-    choice = input("Enter VM number: ").strip()
+    choice = input("Enter the number of the VM to power on: ").strip()
     if not choice.isdigit() or not (1 <= int(choice) <= len(stopped)):
         print("Error: invalid selection.\n")
         return
