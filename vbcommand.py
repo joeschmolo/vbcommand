@@ -100,7 +100,75 @@ def stop_vm():
         print(f"'{vm_name}' stopped.\n")
     except subprocess.CalledProcessError:
         print(f"Failed to stop '{vm_name}'.\n")
-    
+
+# Create a VM
+def create_vm():
+    # Set VM name
+    vm_name = input("Enter a name for the new VM: ").strip()
+    if not vm_name:
+        print("Error: VM name cannot be empty.\n")
+        return
+
+    # Set memory size
+    mem = input("Enter RAM size in MB (e.g. 2048): ").strip()
+    if not mem.isdigit() or int(mem) < 4:
+        print("Error: Invalid memory size.\n")
+        return
+
+    # Set disk size
+    disk_size = input("Enter disk size in MB (e.g. 20000): ").strip()
+    if not disk_size.isdigit() or int(disk_size) < 1:
+        print("Error: Invalid disk size.\n")
+        return
+
+    # Choose network
+    net_mode = input("Network type? [1] NAT  [2] Bridged  (default 1): ").strip()
+    if net_mode == "2":
+        # for bridged you need to pick a host interface, e.g. en0 or eth0
+        host_if = input(" Host interface to bridge (e.g. eth0): ").strip()
+        nic_args = ["--nic1", "bridged", "--bridgeadapter1", host_if]
+    else:
+        nic_args = ["--nic1", "nat"]
+
+    print(f"\nCreating VM '{vm_name}' with {mem}MB RAM, {disk_size}MB disk, network={nic_args[1]}...\n")
+    try:
+        # create
+        subprocess.run(["VBoxManage", "createvm", "--name", vm_name, "--register"], check=True)
+        subprocess.run([
+            "VBoxManage", "modifyvm", vm_name,
+            "--memory", mem,
+            "--vram", "16",
+            *nic_args
+        ], check=True)
+
+        # create virtual disk
+        disk_file = f"{vm_name}.vdi"
+        subprocess.run([
+            "VBoxManage", "createmedium", "disk",
+            "--filename", disk_file,
+            "--size", disk_size
+        ], check=True)
+
+        # add SATA controller
+        subprocess.run([
+            "VBoxManage", "storagectl", vm_name,
+            "--name", "SATA Controller",
+            "--add", "sata",
+            "--controller", "IntelAhci"
+        ], check=True)
+        subprocess.run([
+            "VBoxManage", "storageattach", vm_name,
+            "--storagectl", "SATA Controller",
+            "--port", "0", "--device", "0",
+            "--type", "hdd",
+            "--medium", disk_file
+        ], check=True)
+
+        print(f"VM '{vm_name}' created successfully!\n")
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred creating '{vm_name}':\n  {e}\n")
+
+
 
 # Exit this program
 def exit_program():
@@ -114,6 +182,7 @@ def main_menu():
         '1': ("List VMs", list_all_vms),
         '2': ("Start a VM", start_vm),
         '3': ("Stop a VM (save current state)", stop_vm),
+        '4': ("Create a VM", create_vm),
     }
     # Display the menu
     while True:
