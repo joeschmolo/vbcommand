@@ -33,7 +33,7 @@ def list_virtual_machines(get_selection="all", numbered=False):
         vm_selection = all_vms - running_vms
 
     # Sort into a list for both numbered & un‑numbered output
-    sorted_vms = sorted(vm_set)
+    sorted_vms = sorted(vm_selection)
 
     print("Virtual Machines:\n")
     if numbered:
